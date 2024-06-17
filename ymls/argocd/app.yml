@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: go-web-app
+spec:
+  destination:
+    name: ''
+    namespace: go-app-pipeline
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ymls/deployment
+    repoURL: 'https://github.com/AryanSharma9917/GO-CI-CD.git'
+    targetRevision: HEAD
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
