@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: go-web-app-route
+spec:
+  path: /greet
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: go-web-app-svc
+    weight: 100
+  wildcardPolicy: None
