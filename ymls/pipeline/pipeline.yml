@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: go-pipeline
+spec:
+  workspaces:
+  - name: workspace-test
+  tasks:
+  - name: git-clone
+    params:
+    - name: url
+      value: https://github.com/AryanSharma9917/GO-CI-CD.git
+    taskRef:
+      kind: Task
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: workspace-test
+  - name: go-test
+    params:
+    - name: go-image
+      value: registry.access.redhat.com/ubi8/go-toolset:latest
+    runAfter:
+    - git-clone
+    taskRef:
+      kind: Task
+      name: go-test
+    workspaces:
+    - name: source
+      workspace: workspace-test
+  - name: build-and-push-to-openshift-registry
+    params:
+    - name: image-name
+      value: go-web-app
+    - name: image-tag
+      value: $(context.pipelineRun.uid)
+    - name: dockerfile-path
+      value: Dockerfile
+    - name: internal-registry
+      value: default-route-openshift-image-registry.apps.cndsno3.cee.ral3.lab.eng.rdu2.redhat.com
+    - name: namespace
+      value: go-app-pipeline
+    - name: buildah-image
+      value: quay.io/buildah/stable:v1.17.0
+    runAfter:
+    - go-test
+    taskRef:
+      kind: Task
+      name: build-and-push-to-openshift-registry
+    workspaces:
+    - name: source
+      workspace: workspace-test
+  - name: replica-scale-0-task
+    runAfter:
+    - build-and-push-to-openshift-registry
+    taskRef:
+      kind: Task
+      name: replica-scale-0-task
