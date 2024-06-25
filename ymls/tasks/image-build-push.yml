@@ -1,0 +1,62 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-push-to-openshift-registry
+spec:
+  params:
+    - name: image-name
+      description: The name of the Docker image to build and push
+      type: string
+    - name: image-tag
+      description: The tag of the Docker image to build and push
+      type: string
+    - name: dockerfile-path
+      description: The path to the Dockerfile for building the image
+      default: Dockerfile
+      type: string
+    - name: internal-registry
+      description: URL of the internal OpenShift Registry
+      default: default-route-openshift-image-registry.apps.cndsno3.cee.ral3.lab.eng.rdu2.redhat.com
+      type: string
+    - name: namespace
+      description: Namespace where the image will be pushed
+      default: default
+      type: string
+    - name: buildah-image
+      description: Buildah image
+      default: quay.io/buildah/stable:v1.17.0
+      type: string
+  steps:
+    - name: build-image-and-push-to-internal-registry
+      image: $(params.buildah-image)
+      workingDir: $(workspaces.source.path)/code
+      securityContext:
+        capabilities:
+          add: ["SETFCAP"]
+      env:
+        - name: IMAGE_NAME
+          value: $(params.image-name)
+        - name: IMAGE_TAG
+          value: $(params.image-tag)
+        - name: DOCKERFILE_PATH
+          value: $(params.dockerfile-path)
+        - name: INTERNAL_REGISTRY
+          value: $(params.internal-registry)
+        - name: NAMESPACE
+          value: $(params.namespace)
+      script: |
+        # Setting the VFS storage driver allows us to run Buildah in a non-privileged container
+        # More information can be found here: https://docs.docker.com/storage/storagedriver/vfs-driver/
+        BUILDAH_OPTS="--storage-driver=vfs"
+        buildah ${BUILDAH_OPTS} bud -f ${DOCKERFILE_PATH} -t ${IMAGE_NAME}
+
+        # Push tagged version with commit SHA
+        buildah ${BUILDAH_OPTS} tag ${IMAGE_NAME} ${INTERNAL_REGISTRY}/${NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}
+        buildah ${BUILDAH_OPTS} push --tls-verify=false --cert-dir="/tekton-custom-certs" ${INTERNAL_REGISTRY}/${NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}
+
+        # Push latest tag
+        buildah ${BUILDAH_OPTS} tag ${IMAGE_NAME} ${INTERNAL_REGISTRY}/${NAMESPACE}/${IMAGE_NAME}:latest
+        buildah ${BUILDAH_OPTS} push --tls-verify=false --cert-dir="/tekton-custom-certs" ${INTERNAL_REGISTRY}/${NAMESPACE}/${IMAGE_NAME}:latest
+  workspaces:
+    - name: source
+      description: Persistent storage between pods

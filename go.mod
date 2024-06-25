@@ -1,7 +1,8 @@
-module github.com/AryanSharma9917/GO-CI-CD
+module anilabhabaral/ci-cd-go
 
 go 1.22
 
 require (
-    // other dependencies
+	github.com/codegangsta/inject v0.0.0-20150114235600-33e0aa1cb7c0 // indirect
+	github.com/go-martini/martini v0.0.0-20170121215854-22fa46961aab // indirect
 )
