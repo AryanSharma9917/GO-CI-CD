@@ -17,13 +17,13 @@ spec:
       script: |
         # Remove any existing files from our code workspace
         rm -rf -- ..?* .[!.]* *
-        
-        # Clone Git Repo into `source` workspace
-        git clone $(inputs.params.repo-url) .
 
-        #Save Git Commit's Short Sha and push it to the results
+        # Clone Git Repo into `source` workspace
+        git clone $(params.repo-url) .
+
+        # Save Git Commit's Short Sha and push it to the results
         RESULT_SHA="$(git rev-parse --short HEAD)"
         printf "%s" "${RESULT_SHA}" > "$(results.commit.path)"
   workspaces:
-    - description: Persistance Storage between Pods.
+    - description: Persistent Storage between Pods.
       name: output

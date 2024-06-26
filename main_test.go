@@ -15,13 +15,13 @@ func TestPrintName(t *testing.T) {
 		t.Errorf("Expected: %s, Actual: %s", actualname, name)
 	}
 
-	actualname = "Anilabha"
+	actualname = "Aryan"
 	name = PrintName(actualname)
 	if name != actualname {
 		t.Errorf("Expected: %s, Actual: %s", actualname, name)
 	}
 
-	actualname = "Mainak"
+	actualname = "Charles"
 	name = PrintName(actualname)
 	if name != actualname {
 		t.Errorf("Expected: %s, Actual: %s", actualname, name)
@@ -49,29 +49,29 @@ func TestApi(t *testing.T) {
 	})
 
 	res := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/hello/Anilabha", nil)
+	req, _ := http.NewRequest("GET", "/hello/Aryan", nil)
 
 	m.ServeHTTP(res, req)
 
-	if res.Body.String() != "Hello Anilabha\n" {
+	if res.Body.String() != "Hello Aryan\n" {
 		t.Errorf("Got: %s", res.Body.String())
 	}
 
 	res = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "/hello/Mainak", nil)
+	req, _ = http.NewRequest("GET", "/hello/Charles", nil)
 
 	m.ServeHTTP(res, req)
 
-	if res.Body.String() != "Hello Mainak\n" {
+	if res.Body.String() != "Hello Charles\n" {
 		t.Errorf("Got: %s", res.Body.String())
 	}
 
 	res = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "/hello/sourav", nil)
+	req, _ = http.NewRequest("GET", "/hello/James", nil)
 
 	m.ServeHTTP(res, req)
 
-	if res.Body.String() != "Hello sourav\n" {
+	if res.Body.String() != "Hello James\n" {
 		t.Errorf("Got: %s", res.Body.String())
 	}
 }
