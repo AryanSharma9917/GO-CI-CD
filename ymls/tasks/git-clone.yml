@@ -8,22 +8,22 @@ spec:
       description: The URL of the Git repository to clone.
       type: string
   results:
-    - name: commit
-      description: The precise commit SHA that was fetched by this Task.
+    - description: The precise commit SHA that was fetched by this Task.
+      name: commit
   steps:
-    - name: clone
+    - name: git-clone
       image: quay.io/rhn_support_abaral1/alpine/git
       workingDir: $(workspaces.output.path)/code
       script: |
         # Remove any existing files from our code workspace
         rm -rf -- ..?* .[!.]* *
         
-        # Clone Git Repo into `output` workspace
-        git clone $(params.repo-url) .
+        # Clone Git Repo into `source` workspace
+        git clone $(inputs.params.repo-url) .
 
-        # Save Git Commit's Short Sha and push it to the results
+        #Save Git Commit's Short Sha and push it to the results
         RESULT_SHA="$(git rev-parse --short HEAD)"
         printf "%s" "${RESULT_SHA}" > "$(results.commit.path)"
   workspaces:
-    - name: output
-      description: Persistent Storage between Pods
+    - description: Persistance Storage between Pods.
+      name: output

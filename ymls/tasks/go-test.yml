@@ -1,12 +1,12 @@
+
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: go-test
 spec:
-  description: Test the Go application
+  description: Test the go application
   params:
     - name: go-image
-      description: The image containing Go tools
       default: registry.access.redhat.com/ubi8/go-toolset:latest
       type: string
   steps:
@@ -19,5 +19,5 @@ spec:
         - test
         - -v
   workspaces:
-    - name: source
-      description: Persistent Storage between Pods
+    - description: Persistance Storage between Pods.
+      name: source
