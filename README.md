@@ -34,7 +34,7 @@ curl localhost:8080/hello/Aryan
 ```
 git clone https://github.com/AryanSharma9917/go-ci-cd.git
 ```
-- Login to Openshift cluster 
+- Login to Openshift cluster: 
 ```
 oc login --token=<TOKEN> --server=<SERVER_URL>
 ```
