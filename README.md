@@ -5,7 +5,7 @@
 ```
 git clone https://github.com/AryanSharma9917/GO-CI-CD.git
 ```
-- Build application
+- Build the GO application
 ```
 cd go-ci-cd
 go build .
