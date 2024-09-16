@@ -14,7 +14,7 @@ go build .
 ```
 go test -v 
 ```
-- Run application
+- Running the  application
 ```
 ./go-ci-cd
 ```
